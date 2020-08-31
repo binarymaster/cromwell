@@ -12,9 +12,12 @@
 
 #include "VideoInitialization.h"
 
+extern xbox_av_type DetectAvType();
+
 TEXTMENU *VideoMenuInit(void) {
 	TEXTMENUITEM *itemPtr;
 	TEXTMENU *menuPtr;
+	xbox_av_type av_type = DetectAvType();
 
 	menuPtr = malloc(sizeof(TEXTMENU));
 	memset(menuPtr,0x00,sizeof(TEXTMENU));
@@ -54,6 +57,49 @@ TEXTMENU *VideoMenuInit(void) {
 	itemPtr->functionPtr=SetVideoStandard;
 	itemPtr->functionDataPtr = itemPtr->szCaption;
 	TextMenuAddItem(menuPtr, itemPtr);
+
+	if (av_type != AV_HDTV && av_type != AV_VGA_SOG && av_type != AV_VGA)
+	{
+		itemPtr = malloc(sizeof(TEXTMENUITEM));
+		memset(itemPtr,0x00,sizeof(TEXTMENUITEM));
+
+		strcpy(itemPtr->szCaption, "Set video mode 640x480");
+		itemPtr->functionPtr=SetVideoMode;
+		itemPtr->functionDataPtr = itemPtr->szCaption;
+		TextMenuAddItem(menuPtr, itemPtr);
+
+		itemPtr = malloc(sizeof(TEXTMENUITEM));
+		memset(itemPtr,0x00,sizeof(TEXTMENUITEM));
+
+		strcpy(itemPtr->szCaption, "Set video mode 640x576");
+		itemPtr->functionPtr=SetVideoMode;
+		itemPtr->functionDataPtr = itemPtr->szCaption;
+		TextMenuAddItem(menuPtr, itemPtr);
+
+		itemPtr = malloc(sizeof(TEXTMENUITEM));
+		memset(itemPtr,0x00,sizeof(TEXTMENUITEM));
+
+		strcpy(itemPtr->szCaption, "Set video mode 720x576");
+		itemPtr->functionPtr=SetVideoMode;
+		itemPtr->functionDataPtr = itemPtr->szCaption;
+		TextMenuAddItem(menuPtr, itemPtr);
+
+		itemPtr = malloc(sizeof(TEXTMENUITEM));
+		memset(itemPtr,0x00,sizeof(TEXTMENUITEM));
+
+		strcpy(itemPtr->szCaption, "Set video mode 800x600");
+		itemPtr->functionPtr=SetVideoMode;
+		itemPtr->functionDataPtr = itemPtr->szCaption;
+		TextMenuAddItem(menuPtr, itemPtr);
+
+		itemPtr = malloc(sizeof(TEXTMENUITEM));
+		memset(itemPtr,0x00,sizeof(TEXTMENUITEM));
+
+		strcpy(itemPtr->szCaption, "Set video mode 1024x576");
+		itemPtr->functionPtr=SetVideoMode;
+		itemPtr->functionDataPtr = itemPtr->szCaption;
+		TextMenuAddItem(menuPtr, itemPtr);
+	}
 
 	return menuPtr;
 }

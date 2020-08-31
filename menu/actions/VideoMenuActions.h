@@ -11,5 +11,6 @@
 
 void SetWidescreen(void *);
 void SetVideoStandard(void *);
+void SetVideoMode(void *);
 
 #endif

@@ -17,6 +17,7 @@ void DrawChildTextMenu(void *menu);
 
 void SetWidescreen(void *);
 void SetVideoStandard(void *);
+void SetVideoMode(void *);
 void SetLEDColor(void *);
 
 

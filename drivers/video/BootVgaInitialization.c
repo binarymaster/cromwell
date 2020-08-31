@@ -27,6 +27,8 @@
 #include "encoder.h"
 #include "xcalibur.h"
 
+int PreferredVideoMode = VIDEO_MODE_UNKNOWN;
+
 void DetectVideoEncoder(void) {
 	if (I2CTransmitByteGetReturn(0x45,0x00) != ERR_I2C_ERROR_BUS) video_encoder = ENCODER_CONEXANT;
 	else if (I2CTransmitByteGetReturn(0x6a,0x00) != ERR_I2C_ERROR_BUS) video_encoder = ENCODER_FOCUS;
@@ -101,11 +103,15 @@ void BootVgaInitializationKernelNG(CURRENT_VIDEO_MODE_DETAILS * pvmode) {
    	memset((void *)pvmode,0,sizeof(CURRENT_VIDEO_MODE_DETAILS));
 
 	//Focus driver (presumably XLB also) doesnt do widescreen yet - only blackscreens otherwise.
-	if(((u8 *)&eeprom)[0x96]&0x01 && video_encoder == ENCODER_CONEXANT) { // 16:9 widescreen TV
-		pvmode->m_nVideoModeIndex=VIDEO_MODE_1024x576;
-	} else { // 4:3 TV
-		pvmode->m_nVideoModeIndex=VIDEO_PREFERRED_MODE;
+	if (PreferredVideoMode == VIDEO_MODE_UNKNOWN)
+	{
+		if(((u8 *)&eeprom)[0x96]&0x01 && video_encoder == ENCODER_CONEXANT) { // 16:9 widescreen TV
+			PreferredVideoMode = VIDEO_MODE_1024x576;
+		} else { // 4:3 TV
+			PreferredVideoMode = VIDEO_PREFERRED_MODE;
+		}
 	}
+	pvmode->m_nVideoModeIndex = PreferredVideoMode;
 
         // If the client hasn't set the frame buffer start address, assume
         // it should be at 4M from the end of RAM.

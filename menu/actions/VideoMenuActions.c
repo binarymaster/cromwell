@@ -13,6 +13,9 @@
 #include "VideoInitialization.h"
 #include "BootEEPROM.h"
 
+extern int PreferredVideoMode;
+volatile CURRENT_VIDEO_MODE_DETAILS vmode;
+
 void SetWidescreen(void *menuItemText) {
 	char *text = (char *)menuItemText;
 	if (!strcmp(text, "Display Size: Widescreen")) {
@@ -46,5 +49,29 @@ void SetVideoStandard(void *menuItemText) {
 		EepromSetVideoStandard(PAL_I);
 	}
 
+}
+
+void SetVideoMode(void *menuItemText) {
+	char *text = (char *)menuItemText;
+
+	if (!strcmp(text, "Set video mode 640x480")) {
+		PreferredVideoMode = VIDEO_MODE_640x480;
+	}
+	else if (!strcmp(text, "Set video mode 640x576")) {
+		PreferredVideoMode = VIDEO_MODE_640x576;
+	}
+	else if (!strcmp(text, "Set video mode 720x576")) {
+		PreferredVideoMode = VIDEO_MODE_720x576;
+	}
+	else if (!strcmp(text, "Set video mode 800x600")) {
+		PreferredVideoMode = VIDEO_MODE_800x600;
+	}
+	else if (!strcmp(text, "Set video mode 1024x576")) {
+		PreferredVideoMode = VIDEO_MODE_1024x576;
+	}
+	else {
+		PreferredVideoMode = VIDEO_MODE_UNKNOWN;
+	}
+	BootVgaInitializationKernelNG(&vmode);
 }
 
