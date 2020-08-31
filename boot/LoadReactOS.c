@@ -16,6 +16,10 @@
 #include <shared.h>
 
 extern grub_error_t errnum;
+extern volatile int nInteruptable;
+extern void SetParameterBlock(PARAMETER_BLOCK *Param);
+
+PARAMETER_BLOCK ParamBlock;
 
 /* Length of area to be searched for multiboot header. */
 #define MULTIBOOT_SEARCHAREA_LEN        8192
@@ -296,6 +300,8 @@ int ExittoReactOS(const OPTMULTIBOOT *multiboot) {
 	if (mbHeader == NULL)
 		return;
 
+	SetParameterBlock(&ParamBlock);
+
 	VIDEO_ATTR = 0xff8888a8;
 	printk("     Multiboot header found at 0x%X\n", mbHeader);
 	printk("     Boot device is 0x%X\n", multiboot->uBootDevice);
@@ -353,6 +359,7 @@ void startReactOS(PMULTIBOOTHEADER mbHeader, u32 loaderSize, u32 bootDevice) {
 	//(*(unsigned int *)0xFD600800) = (0xf0000000 | ((xbox_ram * 0x100000) - FB_SIZE));
 
 	/* disable interrupts */
+	nInteruptable = 0;
 	asm volatile ("cli\n");
 
 	/* clear IDT area */
@@ -458,6 +465,38 @@ void startReactOS(PMULTIBOOTHEADER mbHeader, u32 loaderSize, u32 bootDevice) {
 		mmap->length_high = 0;
 		mmap->type = 1;
 	}
+	/* Parameter block */
+	mmap++;
+	mmap->size = sizeof(MEMORYMAP);
+	mmap->base_addr_low = PARAM_BLOCK_OFFSET;
+	mmap->base_addr_high = 0;
+	mmap->length_low = 1024;
+	mmap->length_high = 0;
+	mmap->type = 3;
+	/* IDT block */
+	mmap++;
+	mmap->size = sizeof(MEMORYMAP);
+	mmap->base_addr_low = 0xb0000;
+	mmap->base_addr_high = 0;
+	mmap->length_low = 4096;
+	mmap->length_high = 0;
+	mmap->type = 3;
+	/* Cromwell memory manager area */
+	mmap++;
+	mmap->size = sizeof(MEMORYMAP);
+	mmap->base_addr_low = 0x02A00000;
+	mmap->base_addr_high = 0;
+	mmap->length_low = 16 * 1024 * 1024;
+	mmap->length_high = 0;
+	mmap->type = 3;
+	/* Cromwell Ramcopy + Stack */
+	mmap++;
+	mmap->size = sizeof(MEMORYMAP);
+	mmap->base_addr_low = 0x03A00000;
+	mmap->base_addr_high = 0;
+	mmap->length_low = 2 * 1024 * 1024;
+	mmap->length_high = 0;
+	mmap->type = 3;
 
 	/* Now setup the registers and jump to the multiboot entry point */
 	asm volatile (

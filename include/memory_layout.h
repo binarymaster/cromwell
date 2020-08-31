@@ -33,6 +33,8 @@
 
 #define STACK_TOP 0x03C00000
 
+/* parameter block offset to save data across warm reboots */
+#define PARAM_BLOCK_OFFSET 0x00000200
 /* the size of the framebuffer (defaults to 4 MB) */
 #define FB_SIZE 0x00400000
 /* the start of the framebuffer */

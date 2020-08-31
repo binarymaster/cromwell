@@ -15,6 +15,7 @@ struct xpad_data
 	
 };
 
+unsigned int get_keyboard_key();
 int risefall_xpad_BUTTON(unsigned char selected_Button);
 
 #define XPAD_PAD_UP 1

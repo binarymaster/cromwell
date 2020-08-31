@@ -8,6 +8,13 @@ extern unsigned char xpad_button_history[7];
 // This is for the Keyboard
 extern unsigned int current_keyboard_key;
 
+unsigned int get_keyboard_key() {
+	unsigned int key = current_keyboard_key;
+	current_keyboard_key = 0;
+
+	return key;
+}
+
 int risefall_xpad_BUTTON(unsigned char selected_Button) {
 	
       	int xpad_id; 

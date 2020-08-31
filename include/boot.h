@@ -51,6 +51,14 @@ static inline double max (double a, double b)
 
 #define ASSERT(exp) { if(!(exp)) { bprintf("Assert failed file " __FILE__ " line %d\n", __LINE__); } }
 
+#define PARAM_BLOCK_SIGNATURE    'morC'
+
+typedef struct {
+	int Signature;
+	void * BiosCallback;
+	int Checksum;
+} PARAMETER_BLOCK;
+
 extern volatile CURRENT_VIDEO_MODE_DETAILS vmode;
 unsigned int video_encoder;
 
